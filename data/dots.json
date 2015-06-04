@@ -1,0 +1,14 @@
+{
+	"statements": [
+		{
+			"type": "point",
+			"x": 5,
+			"y": 5
+		},
+		{
+			"type": "point",
+			"x": 15,
+			"y": 15
+		}
+	]
+}

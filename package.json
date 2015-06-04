@@ -1,0 +1,16 @@
+{
+  "name": "smiley",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Baschir Jaghoori",
+  "license": "GPL",
+  "dependencies": {
+    "bootstrap": "3.2.0",
+    "jquery": "2.1.1",
+    "react": "0.13.1",
+    "requirejs": "2.1.17"
+  },
+  "devDependencies": {
+    "typescript": "1.4.1"
+  }
+}
