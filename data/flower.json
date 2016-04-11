@@ -1,0 +1,39 @@
+{
+  "type": "sequence",
+  "statements": [
+    {
+      "type": "repeat",
+      "times": 8,
+      "statement": {
+        "type": "sequence",
+        "statements": [
+	      {
+	        "type": "forward",
+		    "amount": 5
+	      },
+          {
+            "type": "turn",
+            "angle": 45
+          },
+          {
+            "type": "repeat",
+            "times": 18,
+            "statement": {
+              "type": "sequence",
+              "statements": [
+                {
+                  "type": "forward",
+                  "amount": 5
+                },
+                {
+                  "type": "turn",
+                  "angle": 20
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

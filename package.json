@@ -4,13 +4,21 @@
   "description": "",
   "author": "Baschir Jaghoori",
   "license": "GPL",
+  "config": {
+	  "registry": null
+  },
+  "scripts": {
+    "compile": "tsc --project ./src",
+    "start": "webpack-dev-server --hot --inline --config ./devapp/webpack.config.js"
+  },
   "dependencies": {
-    "bootstrap": "3.2.0",
-    "jquery": "2.1.1",
-    "react": "0.13.1",
-    "requirejs": "2.1.17"
+    "bootstrap": "3.2.0"
   },
   "devDependencies": {
-    "typescript": "1.4.1"
+    "typescript": "1.8.9",
+    "react": "0.14.5",
+	"react-dom": "0.14.5",
+    "webpack": "1.12.13",
+    "webpack-dev-server": "1.14.1"
   }
 }
