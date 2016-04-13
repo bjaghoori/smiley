@@ -1,7 +1,7 @@
 import * as Turtle from "./turtle";
 
 export class Runner {
-	constructor(private canvas: Turtle.TurtleCanvas, private current: Statement) {
+	constructor(private canvas: Turtle.TurtleCanvas, public current: Statement) {
 	}
 	
 	step(): boolean {
@@ -10,14 +10,14 @@ export class Runner {
 	}
 }
 
-export interface ChangeListener {
+export interface ActionListener {
 	(): void;
 }
 
 export abstract class Statement {
 	children: Statement[] = [];
 	parent: Statement;
-	changeListener: ChangeListener;
+	changeListener: ActionListener;
 	
     abstract execute(canvas: Turtle.TurtleCanvas): Statement;
 	
@@ -43,6 +43,10 @@ export abstract class Statement {
 		} else if (this.parent) {
 			this.parent.fireChange();
 		}
+	}
+	
+	reset(): void {
+		this.children.forEach(c => c.reset());
 	}
 }
 
@@ -74,6 +78,11 @@ export class Sequence extends Statement {
         }
 		return this.children[this.current++];
     }
+	
+	reset() {
+		this.current = 0;
+		super.reset();
+	}
 }
 
 export class Repeat extends Statement {
@@ -91,52 +100,94 @@ export class Repeat extends Statement {
 		this.count++;
 		return this.children[0];
     }
+	
+	reset() {
+		this.count = 0;
+		super.reset();
+	}
 }
 
-export const STATEMENT_TYPES: {[language: string]: typeof Forward | typeof Turn | typeof Sequence | typeof Repeat} = {
-	"forward": Forward,
-	"turn": Turn,
-	"sequence": Sequence,
-	"repeat": Repeat
+export interface StatementReader {
+	(json: any): Statement;
 }
 
-export class Reader {
-    readStatement(json: any): Statement {
-        if (json.type === "forward") {
-            return this.readForward(json);
-        } else if (json.type === "turn") {
-            return this.readTurn(json);
-        } else if (json.type === "sequence") {
-            return this.readSequence(json);
-        } else if (json.type === "repeat") {
-            return this.readRepeat(json);
-        } else {
-            throw new Error("unknown statement type " + json.type);
-        }
-    }
-	
-	readSequence(json: any): Sequence {
-        const sequence = new Sequence();
-        json.statements.forEach((jsonStmt: any) => sequence.add(this.readStatement(jsonStmt)));
-        return sequence;
-    }
+export interface StatementWriter {
+	(stmt: Statement): any;
+}
 
-	readRepeat(json: any): Repeat {
-        const repeat = new Repeat();
-		repeat.times = json.times;
-        repeat.add(this.readStatement(json.statement));
-        return repeat;
-    }
+export interface StatementType {
+	read: StatementReader;
+	write: StatementWriter;
+}
 
-    readForward(json: any): Forward {
-        const forward = new Forward();
-		forward.amount = json.amount;
-        return forward;
-    }
-	
-	readTurn(json: any): Turn {
-        const turn = new Turn();
+const name = function(type: any): string {
+	return type.constructor.name;
+}
+
+export const STATEMENT_TYPES: {[type: string]: StatementType} = {
+	Forward: {
+		"read": (json: any) => {
+			const forward = new Forward();
+			forward.amount = json.amount;
+			return forward;
+		},
+		"write": (stmt: Forward) => {
+			return {
+				type: "forward",
+				amount: stmt.amount
+			}
+		}
+	},
+	Turn: {
+		"read": (json: any) => {
+		const turn = new Turn();
 		turn.angle = json.angle;
         return turn;
-    }	
+		},
+		"write": (stmt: Turn) => {
+			return {
+				type: "turn",
+				angle: stmt.angle
+			}
+		}	
+	},
+	Repeat: {
+		"read": (json: any) => {
+		const repeat = new Repeat();
+		repeat.times = json.times;
+        repeat.add(readStatement(json.statement));
+        return repeat;
+		},
+		"write": (stmt: Repeat) => {
+			return {
+				type: "repeat",
+				times: stmt.times,
+				statement: stmt.children[0]
+			}
+		}
+	},
+	Sequence: {
+		"read": (json: any) => {
+		const sequence = new Sequence();
+        json.statements.forEach((jsonStmt: any) => sequence.add(readStatement(jsonStmt)));
+        return sequence;
+		},
+		"write": null	
+	}
+}
+
+export const readStatement = (json: any): Statement => {
+	const statementType = STATEMENT_TYPES[json.type];
+	if(statementType === undefined) {
+		throw new Error("unknown statement type " + json.type);
+	}
+	return statementType.read(json);
+}
+
+export const writeStatement = (stmt: Statement): any => {
+	const statementType = STATEMENT_TYPES[name(stmt)];
+	if(statementType === undefined) {
+		throw new Error("unknown statement " + name(stmt));
+	}
+	return statementType.write(stmt);
 }
