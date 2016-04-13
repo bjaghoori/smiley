@@ -56,7 +56,7 @@ let runner: Program.Runner;
 init();
 
 const onChange = () => Editor.render(editor, program, runner);
-program.changeListener = onChange;
+program.structureChangeListener = onChange;
 onChange();
 
 function init(): void {
