@@ -5,21 +5,44 @@ export class Runner {
 	}
 	
 	step(): boolean {
-		console.log(this.current);
 		this.current = this.current.execute(this.canvas);
 		return !!this.current;
 	}
 }
 
+export interface ChangeListener {
+	(): void;
+}
+
 export abstract class Statement {
 	children: Statement[] = [];
 	parent: Statement;
+	changeListener: ChangeListener;
 	
     abstract execute(canvas: Turtle.TurtleCanvas): Statement;
 	
 	add(child: Statement): void {
 		child.parent = this;
 		this.children.push(child);
+		this.fireChange();
+	}
+	
+	remove(child: Statement): void {
+		child.parent = undefined;
+		this.children = this.children.filter(c => c != child);
+		this.fireChange();
+	}
+	
+	detach(): void {
+		this.parent.remove(this);
+	}
+	
+	fireChange(): void {
+		if(this.changeListener) {
+			this.changeListener();
+		} else if (this.parent) {
+			this.parent.fireChange();
+		}
 	}
 }
 
@@ -70,7 +93,14 @@ export class Repeat extends Statement {
     }
 }
 
-export class Reader {	
+export const STATEMENT_TYPES: {[language: string]: typeof Forward | typeof Turn | typeof Sequence | typeof Repeat} = {
+	"forward": Forward,
+	"turn": Turn,
+	"sequence": Sequence,
+	"repeat": Repeat
+}
+
+export class Reader {
     readStatement(json: any): Statement {
         if (json.type === "forward") {
             return this.readForward(json);

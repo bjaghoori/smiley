@@ -48,7 +48,9 @@ const run = <HTMLButtonElement>document.getElementById("run");
 
 const program = new Program.Reader().readStatement(flower);
 
-Editor.render(editor, program);
+const onChange = () => Editor.render(editor, program);
+program.changeListener = onChange;
+onChange();
 
 (<any>window).program = program;
 
