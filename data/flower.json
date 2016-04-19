@@ -1,32 +1,32 @@
 {
-  "type": "sequence",
+  "type": "Sequence",
   "statements": [
     {
-      "type": "repeat",
+      "type": "Repeat",
       "times": 8,
       "statement": {
-        "type": "sequence",
+        "type": "Sequence",
         "statements": [
 	      {
-	        "type": "forward",
+	        "type": "Forward",
 		    "amount": 5
 	      },
           {
-            "type": "turn",
+            "type": "Turn",
             "angle": 45
           },
           {
-            "type": "repeat",
+            "type": "Repeat",
             "times": 18,
             "statement": {
-              "type": "sequence",
+              "type": "Sequence",
               "statements": [
                 {
-                  "type": "forward",
+                  "type": "Forward",
                   "amount": 5
                 },
                 {
-                  "type": "turn",
+                  "type": "Turn",
                   "angle": 20
                 }
               ]

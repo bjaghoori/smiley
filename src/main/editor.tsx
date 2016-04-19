@@ -88,7 +88,7 @@ class Sequence extends React.Component<WidgetProps<Program.Sequence>, SequenceSt
 	}
 	
 	render(): React.ReactElement<any> {
-		const statemenst = this.props.statement.children.map((c) => {
+		const statemenst = this.props.statement.children.map((c, i) => {
 			return createWidget(c, this.props.runner);
 		});
 		return <div>

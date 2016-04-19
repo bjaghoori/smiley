@@ -9,6 +9,7 @@
   },
   "scripts": {
     "compile": "tsc --project ./src",
+    "bundle": "webpack --config ./webpack.config.js",
     "start": "webpack-dev-server --hot --inline --config ./devapp/webpack.config.js"
   },
   "dependencies": {
@@ -17,7 +18,7 @@
   "devDependencies": {
     "typescript": "1.8.9",
     "react": "0.14.5",
-	"react-dom": "0.14.5",
+    "react-dom": "0.14.5",
     "webpack": "1.12.13",
     "webpack-dev-server": "1.14.1"
   }

@@ -9,12 +9,21 @@ import * as Turtle from "./turtle";
  * Also keeps track of the current statement.
  */
 export class Runner {
-	constructor(private canvas: Turtle.TurtleCanvas, public current: Statement) {
+	
+	public current: Statement;
+	
+	constructor(private canvas: Turtle.TurtleCanvas, private root: Statement) {
+		this.current = root;
 	}
 	
 	step(): boolean {
 		this.current = this.current.execute(this.canvas);
 		return !!this.current;
+	}
+	
+	reset(): void {
+		this.root.reset();
+		this.current = this.root;
 	}
 }
 
