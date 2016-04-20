@@ -1,4 +1,4 @@
-{
+export default {
   "type": "Sequence",
   "statements": [
     {

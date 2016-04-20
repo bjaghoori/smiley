@@ -21,6 +21,10 @@ export class Runner {
 		return !!this.current;
 	}
 	
+	finished(): boolean {
+		return this.current === undefined;
+	}
+	
 	reset(): void {
 		this.root.reset();
 		this.current = this.root;

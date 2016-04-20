@@ -3,6 +3,8 @@ import * as Turtle from "../main/turtle";
 import * as Editor from "../main/editor";
 import * as Actions from "../main/actions";
 
+import FLOWER from "../data/flower";
+
 const EMPTY: any = {
 	"type": "Sequence",
 	"statements": []
@@ -19,14 +21,13 @@ let turtleCanvas: Turtle.TurtleCanvas;
 let runner: Program.Runner;
 let onChange: () => void;
 
-load(EMPTY);
+load(FLOWER);
 
 function load(json: any): void {
 	program = Program.readStatement(json);
+	turtleCanvas = new Turtle.TurtleCanvas(trails, turtle, 5.0);
 	runner = new Program.Runner(turtleCanvas, program);
 	
-	init();
-
 	onChange = () => Editor.render(editor, program, runner);
 	program.structureChangeListener = onChange;
 	onChange();
@@ -34,20 +35,20 @@ function load(json: any): void {
 
 function init(): void {
 	program.reset();
-	turtleCanvas = new Turtle.TurtleCanvas(trails, turtle, 5.0);
-	
+	runner.reset();
+	turtleCanvas = new Turtle.TurtleCanvas(trails, turtle, 5.0);	
 }
 
 function stepCompactingSequences(): boolean {
 	
-	if(!runner) {
+	if(runner.finished()) {
 		init();
 	}
 	
 	let result: boolean;
 	do {
 		result = runner.step();
-	} while (runner.current && runner.current instanceof Program.Sequence);
+	} while (!runner.finished() && runner.current instanceof Program.Sequence);
 	return result;
 }
 
@@ -56,12 +57,12 @@ Actions.render(
 	actions,
 	{
 		onRun: () => {
-			init();
+			if(runner.finished()) {
+				init();
+			}
 			function step(): void {
 				if (stepCompactingSequences()) {
 					timer = setTimeout(step, 10);
-				} else {
-					runner = undefined;
 				}
 			};
 			step();
@@ -69,16 +70,14 @@ Actions.render(
 
 		onStop: () => {
 			clearTimeout(timer);
-			//runner = undefined;
+			timer = undefined;
 		},
 
 		onStep: () => {
-			if (!runner) {
+			if(runner.finished()) {
 				init();
 			}
-			if (!stepCompactingSequences()) {
-				runner = undefined;
-			}
+			stepCompactingSequences();
 			onChange();
 		},
 
@@ -94,4 +93,3 @@ Actions.render(
 
 (<any>window).program = program;
 (<any>window).runner = runner;
-
