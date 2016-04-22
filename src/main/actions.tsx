@@ -1,6 +1,8 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
 
+import {resources} from "./i18n";
+
 export interface ActionListeners {
 	onRun: ActionListener;
 	onStop: ActionListener;
@@ -25,19 +27,19 @@ export function render(slot: Element, listeners: ActionListeners): void {
 	ReactDom.render(<Actions listeners={listeners}/>, slot);
 }
 
-interface ActionsProps {
+export interface ActionsProps {
 	listeners: ActionListeners;
 }
-class Actions extends React.Component<ActionsProps, void> {
+export class Actions extends React.Component<ActionsProps, void> {
 	render(): React.ReactElement<any> {
 		return <div>
-			<button type="button" onClick={() => this.props.listeners.onRun()}>run</button>
-			<button type="button" onClick={() => this.props.listeners.onStop()}>stop</button>
-			<button type="button" onClick={() => this.props.listeners.onStep()}>step</button>
+			<button type="button" onClick={() => this.props.listeners.onRun()}>{resources.Action.run}</button>
+			<button type="button" onClick={() => this.props.listeners.onStop()}>{resources.Action.stop}</button>
+			<button type="button" onClick={() => this.props.listeners.onStep()}>{resources.Action.step}</button>
 			
 			<input type="file" onChange={(e) => this.handleFile(e)} />
 			
-			<button type="button" onClick={() => this.download()}>save</button>
+			<button type="button" onClick={() => this.download()}>{resources.Action.save}</button>
 		</div>
 	}
 	

@@ -12,12 +12,12 @@ export class Runner {
 	
 	public current: Statement;
 	
-	constructor(private canvas: Turtle.TurtleCanvas, private root: Statement) {
+	constructor(private root: Statement) {
 		this.current = root;
 	}
 	
-	step(): boolean {
-		this.current = this.current.execute(this.canvas);
+	step(canvas: Turtle.TurtleCanvas): boolean {
+		this.current = this.current.execute(canvas);
 		return !!this.current;
 	}
 	

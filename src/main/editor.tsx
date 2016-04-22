@@ -2,9 +2,16 @@ import * as React from "react";
 import * as ReactDom from "react-dom";
 
 import * as Program from "../main/program";
+import {resources} from "./i18n";
 
 export function render(slot: Element, program: Program.Statement, runner: Program.Runner): void {
 	ReactDom.render(createWidget(program, runner), slot);
+}
+
+export class Editor extends React.Component<WidgetProps<Program.Statement>, void> {
+	render(): React.ReactElement<any> {
+		return createWidget(this.props.statement, this.props.runner);
+	}
 }
 
 function createWidget(stmt: Program.Statement, runner: Program.Runner): React.ReactElement<any> {
@@ -20,7 +27,7 @@ function createWidget(stmt: Program.Statement, runner: Program.Runner): React.Re
 	return null;
 }
 
-interface WidgetProps<T extends Program.Statement> {
+export interface WidgetProps<T extends Program.Statement> {
 	statement: T;
 	runner: Program.Runner;
 }
@@ -39,9 +46,9 @@ class Forward extends React.Component<WidgetProps<Program.Forward>, ForwardState
 	
 	render(): React.ReactElement<any> {
 		return <li>
-			Forward
+			{resources.Statement.Forward}
 			<NumberInput {...new PropertyAccessor<Number>(this.props.statement, "amount")}/>
-			steps
+			{resources.steps}
 			<Remove statement={this.props.statement}/>
 			<CurrentMarker statement={this.props.statement} runner={this.props.runner}/>
 		</li>;
@@ -66,9 +73,9 @@ class Turn extends React.Component<WidgetProps<Program.Turn>, void> {
 	
 	render(): React.ReactElement<any> {
 		return <li>
-			Turn
+			{resources.Statement.Turn}
 			<NumberInput {...new PropertyAccessor<Number>(this.props.statement, "angle")}/>
-			degrees
+			{resources.degrees}
 			<Remove statement={this.props.statement}/>
 			<CurrentMarker statement={this.props.statement} runner={this.props.runner}/>
 		</li>
@@ -92,7 +99,7 @@ class Sequence extends React.Component<WidgetProps<Program.Sequence>, SequenceSt
 			return createWidget(c, this.props.runner);
 		});
 		return <div>
-			<button type="button" onClick={() => this.onAdd()} disabled={this.isAdding()}>add</button>
+			<button type="button" onClick={() => this.onAdd()} disabled={this.isAdding()}>{resources.Action.add}</button>
 			<ul>
 				{statemenst}
 				{this.newStatement()}
@@ -147,9 +154,9 @@ class Repeat extends React.Component<WidgetProps<Program.Repeat>, void> {
 			? createWidget(this.props.statement.children[0], this.props.runner)
 			: null;
 		return <li>
-				Repeat
+				{resources.Statement.Repeat}
 				<NumberInput {...new PropertyAccessor<Number>(this.props.statement, "times")}/>
-				times
+				{resources.times}
 				<Remove statement={this.props.statement}/>
 				<CurrentMarker statement={this.props.statement} runner={this.props.runner}/>
 				{statement}
@@ -211,7 +218,7 @@ interface RemoveProps {
 }
 class Remove extends React.Component<RemoveProps, void> {
 	render(): React.ReactElement<any> {
-		return <button type="button" onClick={() => this.onClick()}>remove</button>
+		return <button type="button" onClick={() => this.onClick()}>{resources.Action.remove}</button>
 	}
 	
 	private onClick(): void {

@@ -7,6 +7,14 @@ module.exports = {
 	resolve: {
 	},
 	resolveLoader: { fallback: Path.join(__dirname, "..", "node_modules") },
+	module: {
+		preLoaders: [
+			{
+				test: /\.js$/,
+				loader: "source-map-loader"
+			}
+		]
+	},
 	output: {
 		path: Path.join(__dirname, "./"),
 		publicPath: "/",
